@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "export": "next bulid && next export",
+    "export": "next build && next export",
     "start": "next start",
     "lint": "eslint --ignore-path .gitignore ."
   },
