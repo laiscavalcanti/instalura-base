@@ -57,9 +57,10 @@ const Modal = ({ isOpen, onClose, children }) => {
           }}
           transition={{ duration: 0.5 }}
         >
-          {children &&
+          {children && 
             children({
               "data-modal-safe-area": "true",
+              
             })}
         </motion.div>
       </ModalWrapper>

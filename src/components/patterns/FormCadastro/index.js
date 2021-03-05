@@ -1,15 +1,15 @@
-import React from 'react';
-import styled, {css} from "styled-components"
-import { Lottie } from '@crello/react-lottie';
-import errorAnimation from './animations/error.json';
-import successAnimation from './animations/success.json';
-import { Grid } from '../../layout/Grid';
-import { Box } from '../../layout/Box';
-import { Button } from '../../commons/Button';
-import Text from '../../foundation/Text';
-import TextField from '../../forms/TextField';
+import React from "react";
+import styled, { css } from "styled-components";
+import { Lottie } from "@crello/react-lottie";
+import errorAnimation from "./animations/error.json";
+import successAnimation from "./animations/success.json";
+import { Grid } from "../../layout/Grid";
+import { Box } from "../../layout/Box";
+import { Button } from "../../commons/Button";
+import Text from "../../foundation/Text";
+import TextField from "../../forms/TextField";
 import { CloseOutline } from "@styled-icons/evaicons-outline/CloseOutline";
-import {breakpointsMedia} from "../../../theme/utils/breakpointsMedia";
+import { breakpointsMedia } from "../../../theme/utils/breakpointsMedia";
 
 const CloseButton = styled(CloseOutline)`
   width: 50px;
@@ -21,20 +21,22 @@ const CloseButton = styled(CloseOutline)`
       margin-right: 1rem;
     `,
   })}
-
 `;
 
 const formStates = {
-  DONE: 'DONE',
-  ERROR: 'ERROR',
-  DEFAULT: 'DEFAULT',
+  DONE: "DONE",
+  ERROR: "ERROR",
+  DEFAULT: "DEFAULT",
 };
 function FormContent() {
-  const [submissionStatus, setSubmissionStatus] = React.useState(formStates.DEFAULT);
+  const [submissionStatus, setSubmissionStatus] = React.useState(
+    formStates.DEFAULT
+  );
   const [isFormSubmited, setIsFormSubmited] = React.useState(false);
   const [userInfo, setUserInfo] = React.useState({
-    usuario: ' ',
-    nome: ' ',
+    name: " ",
+    email: " ",
+    message: " ",
   });
 
   function setValue(name, value) {
@@ -44,7 +46,10 @@ function FormContent() {
     });
   }
 
-  const isFormInvalid = userInfo.usuario.length === 0 || userInfo.nome.length === 0;
+  const isFormInvalid =
+    userInfo.name.length === 0 ||
+    userInfo.email.length === 0 ||
+    userInfo.message.length === 0;
 
   return (
     <form
@@ -58,23 +63,32 @@ function FormContent() {
         }
 
         const userDTO = {
-          username: userInfo.usuario,
-          name: userInfo.nome,
+          name: userInfo.name,
+          email: userInfo.email,
+          message: userInfo.message,
         };
 
-        return fetch('https://instalura-api.vercel.app/api/users', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(userDTO),
-        })
+        return fetch(
+          "https://contact-form-api-jamstack.herokuapp.com/message",
+          {
+            method: "POST",
+            headers: {
+              'Access-Control-Allow-Credentials': true,
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'GET,OPTIONS,PATCH,DELETE,POST',
+              'Content-Type' : 'application/json'
+             },
+            body: JSON.stringify(userDTO),
+          }
+        )
           .then((response) => {
             if (response.ok) {
               return response.json();
             }
 
-            throw new Error('ERROU!!!! Não foi possível completar sua chamada, tente novamente mais tarde, tu tu tu...');
+            throw new Error(
+              "ERROU!!!! Não foi possível completar sua chamada, tente novamente mais tarde, tu tu tu..."
+            );
           })
           .then((responseConverted) => {
             setSubmissionStatus(formStates.DONE);
@@ -96,11 +110,7 @@ function FormContent() {
           });
       }}
     >
-      <Text
-        variant="title"
-        tag="h1"
-        color="tertiary.main"
-      >
+      <Text variant="title" tag="h1" color="tertiary.main">
         Pronto para saber da vida dos outros?
       </Text>
       <Text
@@ -109,21 +119,27 @@ function FormContent() {
         color="tertiary.light"
         marginBottom="32px"
       >
-        Você está a um passo de saber tudoo que está
-        rolando no bairro, complete seu cadastro agora!
+        Você está a um passo de saber tudoo que está rolando no bairro, complete
+        seu cadastro agora!
       </Text>
 
       <TextField
         placeholder="Nome"
-        name="nome"
-        value={userInfo.nome}
-        onChange={(event) => setValue('nome', event.target.value)}
+        name="name"
+        value={userInfo.name}
+        onChange={(event) => setValue("name", event.target.value)}
       />
       <TextField
-        placeholder="Usuário"
-        name="usuario"
-        value={userInfo.usuario}
-        onChange={(event) => setValue('usuario', event.target.value)}
+        placeholder="Email"
+        name="email"
+        value={userInfo.email}
+        onChange={(event) => setValue("email", event.target.value)}
+      />
+      <TextField
+        placeholder="Mensagem"
+        name="message"
+        value={userInfo.message}
+        onChange={(event) => setValue("message", event.target.value)}
       />
 
       <Button
@@ -131,8 +147,8 @@ function FormContent() {
         type="submit"
         variant="primary.main"
         margin={{
-          xs: '0 auto',
-          md: 'initial',
+          xs: "0 auto",
+          md: "initial",
         }}
         fullWidth
       >
@@ -141,15 +157,16 @@ function FormContent() {
 
       {/* Desafiar a galera a colocar um loading e passar um feedback por escrito também */}
 
-      <Box
-        display="flex"
-        justifyContent="center"
-      >
+      <Box display="flex" justifyContent="center">
         {isFormSubmited && submissionStatus === formStates.ERROR && (
           <Lottie
             width="100px"
             height="100px"
-            config={{ animationData: errorAnimation, loop: true, autoplay: true }}
+            config={{
+              animationData: errorAnimation,
+              loop: true,
+              autoplay: true,
+            }}
           />
         )}
 
@@ -157,7 +174,11 @@ function FormContent() {
           <Lottie
             width="100px"
             height="100px"
-            config={{ animationData: successAnimation, loop: true, autoplay: true }}
+            config={{
+              animationData: successAnimation,
+              loop: true,
+              autoplay: true,
+            }}
           />
         )}
       </Box>
@@ -165,25 +186,20 @@ function FormContent() {
   );
 }
 
-export default function FormCadastro({onClose, propsDoModal}) {
+export default function FormCadastro({ onClose, propsDoModal }) {
   return (
-    <Grid.Row
-      marginLeft={0}
-      marginRight={0}
-      flex={1}
-      justifyContent="flex-end"
-    >
+    <Grid.Row marginLeft={0} marginRight={0} flex={1} justifyContent="flex-end">
       <Grid.Col
         display="flex"
         backgroundColor="#ffffff"
         flexDirection="row-reverse"
-        paddingRight={{ md: '0' }}
+        paddingRight={{ md: "0" }}
         value={{ xs: 12, md: 5, lg: 4 }}
       >
-          <CloseButton
+        <CloseButton
           onClick={() => {
             onClose();
-            console.log('fuui clicado')
+            console.log("fuui clicado");
           }}
         />
         <Box
@@ -193,8 +209,8 @@ export default function FormCadastro({onClose, propsDoModal}) {
           justifyContent="center"
           flex={1}
           padding={{
-            xs: '16px',
-            md: '85px',
+            xs: "16px",
+            md: "85px",
           }}
           backgroundColor="white"
           // eslint-disable-next-line react/jsx-props-no-spreading
